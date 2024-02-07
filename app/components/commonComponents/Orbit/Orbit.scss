@@ -1,0 +1,213 @@
+$orbitItemSize: 1.9em;
+$map: (
+  orbit-ring-0: 7,
+  orbit-ring-1: 7,
+  orbit-ring-2: 5,
+  orbit-ring-3: 3,
+);
+$lastorbit-ring: 3;
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 100%;
+}
+
+.orbit {
+  //   background: darken(#1a237e, 20%);
+  //   float: left;
+
+  width: 100%;
+  //   max-width: 1vw;
+  //   max-height: 60vh;
+}
+
+.orbit-icon {
+  width: $orbitItemSize;
+  height: $orbitItemSize;
+  line-height: $orbitItemSize;
+  font-size: 200px;
+
+  border-radius: 50%;
+
+  background: #ccc;
+  color: red;
+  text-align: center;
+  display: block;
+}
+
+.orbit-wrap {
+  height: auto; // Adjust based on your content, could be specific height
+  position: relative;
+  margin: 50px 50px;
+  width: 100%; // Ensure it doesn't overflow its container
+  list-style: none;
+  font-size: 1.3em;
+
+  > li {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+
+    // &:hover {
+    //   ul {
+    //     border-width: 2px;
+    //     border-color: #fff;
+    //   }
+    //   ~ li ul {
+    //     border-color: rgba(255, 255, 255, 0.2);
+    //     li {
+    //       opacity: 0.4;
+    //     }
+    //   }
+    // }
+  }
+}
+
+ul[class^="orbit-ring"] {
+  @extend %orbit-ring;
+  transition: all 300ms ease-in-out;
+  li {
+    @extend %orbiting-object;
+    transition: all 300ms ease-in-out;
+  }
+}
+
+@mixin orbit-item($numItems, $numorbit-ring) {
+  @for $s from 1 through $numItems {
+    // Spread items over the orbit-ring
+    $deg: 380deg / $numItems;
+
+    .orbit-ring-#{$numorbit-ring} > *:nth-of-type(#{$s}) {
+      transform: rotate($s * $deg)
+        translate(12.5em - ($numorbit-ring * 2.5))
+        rotate(-$s * $deg);
+    }
+  }
+}
+
+// Render orbit-rings
+@for $i from 0 through $lastorbit-ring {
+  .orbit-ring-#{$i} {
+    // decrease each orbit-ring in size
+    width: 25em - ($i * 5);
+    height: 25em - ($i * 5);
+    animation: clockwiseRotate 35s - ($i * 5) linear infinite;
+
+    i {
+      animation: counterClockwiseRotate 35s - ($i * 5) linear infinite;
+    }
+  }
+
+  @include orbit-item(map-get($map, orbit-ring-#{$i}), $i);
+}
+
+%orbit-ring {
+  border: solid 2px rgba(33, 150, 243, 0.8);
+
+  position: relative;
+  padding: 0;
+  border-radius: 70%;
+  list-style: none;
+  box-sizing: content-box;
+}
+
+%orbiting-object {
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: $orbitItemSize;
+  height: $orbitItemSize;
+  margin: -$orbitItemSize / 2;
+}
+
+/*
+  center;
+*/
+.orbit-center {
+  z-index: 5;
+  font-size: 2em;
+  width: 1.8em;
+  height: 1.8em;
+  line-height: 1.8em;
+  text-align: center;
+  background: transparent;
+  border: 2;
+  border-color: black;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer; /* Add this if you want to show the pointer cursor on hover */
+
+  &:hover .orbit-center {
+    transform: rotateZ(0deg);
+  }
+}
+.orbit-center__icon {
+  transform: rotateZ(-360deg);
+  transition: all 300ms ease-in-out;
+}
+// .orbit-wrap > li.orbit-center:hover ~ li > ul {
+//   width: 0;
+//   height: 0;
+//   * {
+//     transform: translate(0, 0);
+//   }
+// }
+
+/* 
+animations 
+*/
+@keyframes clockwiseRotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes counterClockwiseRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+/* 
+icons 
+*/
+$icons: (
+  ("heart-o", #b71c1c, white),
+  ("coffee", #4caf50, #cddc39),
+  ("safari", white, darkslateblue),
+  ("firefox", #1565c0, #ff8f00),
+  ("chrome", #fbc02d, #ef6c00),
+  ("edge", #03a9f4, white),
+  ("android", snow, limegreen),
+  ("apple", #444, white),
+  ("linux", white, #222),
+  ("windows", white, #03a9f4),
+  ("terminal", #222, #fff),
+  ("html5", white, #e65100),
+  ("css3", white, #2196f3),
+  ("git", #222, white),
+  ("free-code-camp", green, white),
+  ("meetup", red, white),
+  ("podcast", red, white),
+  ("codepen", #333, white)
+);
+
+@each $icon in $icons {
+  .fa-#{nth($icon, 1)} {
+    background: nth($icon, 2);
+    color: nth($icon, 3);
+  }
+}
